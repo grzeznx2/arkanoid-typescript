@@ -33,12 +33,12 @@ export class CanvasView {
     if (this.info) this.info.innerHTML = text
   }
 
-  drawSprite(sprite: Ball | Paddle | Brick): void {
+  drawSprite(sprite: Brick): void {
     if (!sprite) return
     this.context?.drawImage(sprite.image, sprite.pos.x, sprite.pos.y, sprite.width, sprite.height)
   }
 
   drawBricks(bricks: Brick[]): void {
-    bricks.forEach(this.drawSprite)
+    bricks.forEach(brick => this.drawSprite(brick))
   }
 }

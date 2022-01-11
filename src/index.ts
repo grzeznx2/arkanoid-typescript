@@ -15,6 +15,7 @@ import {
   PADDLE_WIDTH,
   PADDLE_STARTX,
 } from './setup'
+import { createBricks } from './helpers'
 
 let gameOver = false
 let score = 0
@@ -29,9 +30,22 @@ function setGameWon(view: CanvasView): void {
   gameOver = false
 }
 
-function gameLoop(view: CanvasView, bricks: Brick[], paddle: Paddle, ball: Ball): void {}
+function gameLoop(view: CanvasView, bricks: Brick[]): void {
+  view.clear()
+  view.drawBricks(bricks)
 
-function startGame(view: CanvasView): void {}
+  requestAnimationFrame(() => gameLoop(view, bricks))
+}
+
+function startGame(view: CanvasView): void {
+  score = 0
+  view.drawInfo('')
+  view.drawScore(score)
+
+  const bricks = createBricks()
+
+  gameLoop(view, bricks)
+}
 
 const view = new CanvasView('#playField')
 view.initStartButton(startGame)
