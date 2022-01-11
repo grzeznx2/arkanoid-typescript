@@ -16,6 +16,7 @@ import {
   PADDLE_STARTX,
 } from './setup'
 import { createBricks } from './helpers'
+import { Collision } from './Collision'
 
 let gameOver = false
 let score = 0
@@ -30,7 +31,13 @@ function setGameWon(view: CanvasView): void {
   gameOver = false
 }
 
-function gameLoop(view: CanvasView, bricks: Brick[], paddle: Paddle, ball: Ball): void {
+function gameLoop(
+  view: CanvasView,
+  bricks: Brick[],
+  paddle: Paddle,
+  ball: Ball,
+  collision: Collision
+): void {
   view.clear()
   view.drawBricks(bricks)
   view.drawSprite(paddle)
@@ -45,13 +52,22 @@ function gameLoop(view: CanvasView, bricks: Brick[], paddle: Paddle, ball: Ball)
     paddle.movePaddle()
   }
 
-  requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball))
+  collision.checkBallCollision(ball, paddle, view)
+  const collidingBrick = collision.isCollidingBricks(ball, bricks)
+
+  if (collidingBrick) {
+    score += 1
+    view.drawScore(score)
+  }
+
+  requestAnimationFrame(() => gameLoop(view, bricks, paddle, ball, collision))
 }
 
 function startGame(view: CanvasView): void {
   score = 0
   view.drawInfo('')
   view.drawScore(score)
+  const collision = new Collision()
 
   const bricks = createBricks()
 
@@ -65,7 +81,7 @@ function startGame(view: CanvasView): void {
     PADDLE_IMAGE
   )
 
-  gameLoop(view, bricks, paddle, ball)
+  gameLoop(view, bricks, paddle, ball, collision)
 }
 
 const view = new CanvasView('#playField')
